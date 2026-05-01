@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔮 Oracle Sandi Labb</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- BACKGROUND MUSIC (auto-loads on first interaction) -->
+<div id="youtubeAudioContainer" style="position:fixed;bottom:-120px;left:-120px;z-index:-1;opacity:0.01;pointer-events:none;"></div>
+
+<!-- ══════════════════════════════════════════
+     HEADER / NAV
+══════════════════════════════════════════ -->
+<header>
+  <div class="logo" onclick="showScreen('screen-home')">🔮 ORACLE SANDI</div>
+  <nav class="nav-links">
+    <button class="nav-link" onclick="showScreen('screen-home')">Home</button>
+    <button class="nav-link" onclick="openAbout()">About Us</button>
+    <button class="nav-cta" onclick="openChat()">✨ Chat Oracle</button>
+  </nav>
+</header>
+
+<!-- ══════════════════════════════════════════
+     MAIN APP PANEL
+══════════════════════════════════════════ -->
+<div class="main-content">
+  <div class="app-panel">
+
+    <!-- ── HOME ── -->
+    <div id="screen-home" class="screen active">
+      <span class="hero-glyph">🌌</span>
+      <h1 class="hero-title">Oracle Sandi</h1>
+      <p class="hero-subtitle">Unlock the secrets of the cosmos and find your path through the stars.</p>
+      <button class="btn-primary" onclick="startApp()">Begin Your Journey</button>
+    </div>
+
+    <!-- ── PROFILE FORM ── -->
+    <div id="screen-form" class="screen">
+      <h2 class="section-title">✨ Your Profile</h2>
+      <p class="section-sub">Enter your birth details for a personalised reading.</p>
+      <input type="text"  id="userName"   placeholder="Full Name">
+      <input type="date"  id="birthDate">
+      <input type="time"  id="birthTime">
+      <input type="text"  id="birthCity"  placeholder="Birth City (e.g. London, Tokyo)">
+      <button class="btn-primary"    onclick="saveProfile()">Generate Destiny</button>
+      <button class="btn-secondary"  onclick="showScreen('screen-home')">← Back</button>
+    </div>
+
+    <!-- ── MAIN NAVIGATION ── -->
+    <div id="screen-nav" class="screen">
+      <h2 id="welcomeText" class="section-title" style="margin-bottom:6px;">Welcome, Seeker</h2>
+      <p class="section-sub">Choose your path of discovery:</p>
+
+      <div class="choice-card" onclick="showChart()">
+        <h3>🌠 Birth Chart</h3>
+        <p>Map your planetary alignment and uncover your true self.</p>
+      </div>
+
+      <div class="choice-card" onclick="showDailyHoroscope()">
+        <h3>📅 Daily Horoscope</h3>
+        <p>Receive today's cosmic guidance based on your sun sign.</p>
+      </div>
+
+      <div class="choice-card" onclick="showScreen('screen-compat')">
+        <h3>💞 Compatibility</h3>
+        <p>Discover the cosmic bond between two signs.</p>
+      </div>
+
+      <div class="choice-card" onclick="showScreen('screen-tarot-prep')">
+        <h3>🃏 Tarot Oracle</h3>
+        <p>Seek guidance through the ancient Major Arcana.</p>
+      </div>
+    </div>
+
+    <!-- ── BIRTH CHART ── -->
+    <div id="screen-chart" class="screen">
+      <h2 class="section-title">🌠 Cosmic Insight</h2>
+      <div class="chart-wheel-container">
+        <canvas id="chartCanvas" width="280" height="280"></canvas>
+      </div>
+      <div class="chart-grid"  id="chartDisplay"></div>
+      <div class="sky-map"     id="skyMapContainer"></div>
+      <div class="behavior-box" id="chartReading"></div>
+      <button class="btn-secondary" onclick="showScreen('screen-nav')" style="margin-top:18px;">← Back</button>
+    </div>
+
+    <!-- ── DAILY HOROSCOPE ── -->
+    <div id="screen-horoscope" class="screen">
+      <h2 class="section-title">📅 Daily Horoscope</h2>
+      <div id="horoscope-content"></div>
+      <button class="btn-secondary" onclick="showScreen('screen-nav')" style="margin-top:18px;">← Back</button>
+    </div>
+
+    <!-- ── COMPATIBILITY ── -->
+    <div id="screen-compat" class="screen">
+      <h2 class="section-title">💞 Compatibility</h2>
+      <p class="section-sub">Discover the cosmic bond between two signs.</p>
+
+      <div class="compat-grid">
+        <div class="compat-person">
+          <div style="font-size:0.7rem;font-family:'DM Sans',sans-serif;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Person 1</div>
+          <input type="text" id="compat-name1" placeholder="Name (optional)" style="margin-bottom:8px;">
+          <select id="compat-sign1">
+            <option value="">Sign…</option>
+          </select>
+        </div>
+        <div class="compat-vs">vs</div>
+        <div class="compat-person">
+          <div style="font-size:0.7rem;font-family:'DM Sans',sans-serif;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Person 2</div>
+          <input type="text" id="compat-name2" placeholder="Name (optional)" style="margin-bottom:8px;">
+          <select id="compat-sign2">
+            <option value="">Sign…</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn-gold" onclick="showCompatibility()">✨ Read Our Stars</button>
+      <div id="compat-result-area"></div>
+      <button class="btn-secondary" onclick="showScreen('screen-nav')" style="margin-top:14px;">← Back</button>
+    </div>
+
+    <!-- ── TAROT PREP ── -->
+    <div id="screen-tarot-prep" class="screen">
+      <h2 class="section-title">🃏 The Oracle</h2>
+      <p class="section-sub">Select your spread and focus on your question.</p>
+      <select id="spreadType">
+        <option value="yesno">Yes / No Oracle</option>
+        <option value="love">Love Spread</option>
+        <option value="career">Career Spread</option>
+        <option value="general">General Reading</option>
+      </select>
+      <textarea id="userQuestion" placeholder="Focus on your intention and type a question…" rows="3"></textarea>
+      <button class="btn-primary"   onclick="startDraw()">Manifest the Cards</button>
+      <button class="btn-secondary" onclick="showScreen('screen-nav')">Cancel</button>
+    </div>
+
+    <!-- ── TAROT DRAW ── -->
+    <div id="screen-tarot-draw" class="screen">
+      <p id="drawContext" style="color:var(--gold);font-style:italic;font-size:0.9rem;margin-bottom:8px;"></p>
+
+      <div class="card-container">
+        <div class="card" id="tarotCard" onclick="flipCard()">
+          <!-- BACK -->
+          <div class="card-face card-back">
+            <div class="card-back-pattern"></div>
+            <div class="card-back-glyph">✳️</div>
+            <p class="card-back-hint">Tap to Reveal</p>
+          </div>
+          <!-- FRONT (populated by JS) -->
+          <div class="card-face card-front" id="cardResult"></div>
+        </div>
+      </div>
+
+      <div id="detailedReading" class="reading-text" style="display:none;"></div>
+      <button class="btn-secondary" onclick="showScreen('screen-nav')" style="margin-top:18px;">← Back</button>
+    </div>
+
+  </div><!-- /.app-panel -->
+</div><!-- /.main-content -->
+
+<!-- ══════════════════════════════════════════
+     CHAT OVERLAY
+══════════════════════════════════════════ -->
+<div id="chatOverlay" class="chat-overlay">
+  <div class="chat-panel">
+
+    <div class="chat-header">
+      <div class="chat-header-left">
+        <div class="oracle-avatar">🔮</div>
+        <div>
+          <div class="oracle-name">Oracle Sandi</div>
+          <div class="oracle-status-line">
+            <span class="status-dot"></span>
+            Reading the cosmos for you
+          </div>
+        </div>
+      </div>
+      <button class="chat-close-btn" onclick="closeChat()">✕</button>
+    </div>
+
+    <div class="spread-bar">
+      <span class="spread-label">Focus:</span>
+      <button class="spread-chip active" onclick="setSpread(this,'general')">General</button>
+      <button class="spread-chip"        onclick="setSpread(this,'love')">Love</button>
+      <button class="spread-chip"        onclick="setSpread(this,'career')">Career</button>
+      <button class="spread-chip"        onclick="setSpread(this,'yesno')">Yes / No</button>
+    </div>
+
+    <div id="chatMessages" class="chat-messages">
+      <!-- Initial oracle message -->
+      <div class="msg-row">
+        <div class="msg-av oracle-av">🔮</div>
+        <div class="msg-wrap">
+          <div class="msg-name">Oracle Sandi</div>
+          <div class="msg-bubble oracle-bubble">
+            Greetings, seeker. The cards are ready to reveal what the cosmos holds for you.
+            Ask me about love, purpose, a decision weighing on your heart — or anything at all.
+          </div>
+          <div class="chat-card">
+            <div class="chat-card-glyph">🌟</div>
+            <div class="chat-card-details">
+              <div class="chat-card-name">The Star</div>
+              <div class="chat-card-orient">↑ Card of the Moment</div>
+              <div class="chat-card-kw">hope · renewal · guidance</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-input-area">
+      <div class="suggestion-pills" id="suggestionPills">
+        <button class="suggestion-pill" onclick="useSuggestion(this)">What does my future hold?</button>
+        <button class="suggestion-pill" onclick="useSuggestion(this)">Should I trust this person?</button>
+        <button class="suggestion-pill" onclick="useSuggestion(this)">What career path suits me?</button>
+      </div>
+      <div class="chat-input-row">
+        <textarea class="chat-textarea" id="chatInput"
+          placeholder="Ask the Oracle…"
+          rows="1"
+          oninput="autoResize(this)"></textarea>
+        <button class="chat-send-btn" onclick="sendMessage()" title="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+               stroke="white" stroke-width="2.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /.chat-panel -->
+</div><!-- /.chat-overlay -->
+
+<!-- ══════════════════════════════════════════
+     FLOATING MUSIC BUTTON
+══════════════════════════════════════════ -->
+<button id="musicFab" class="music-fab" onclick="toggleMusic()" title="Toggle background music">🎵</button>
+
+<!-- ══════════════════════════════════════════
+     ABOUT MODAL
+══════════════════════════════════════════ -->
+<div id="aboutModal" class="modal-overlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeAbout()">✕</button>
+    <h2>🔮 About Oracle Sandi Labb</h2>
+
+    <p>Oracle Sandi Labb is a mystical digital sanctuary where ancient tarot wisdom meets modern intuitive guidance. We believe the cosmos speaks to all of us — sometimes we just need a mirror to hear it more clearly.</p>
+
+    <p>Our oracle is designed to help you reflect deeply, ask honest questions, and find grounded answers in the symbolism of the Major Arcana and the patterns of your birth chart.</p>
+
+    <div class="modal-divider"></div>
+
+    <div style="font-family:'DM Sans',sans-serif;font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;">What We Offer</div>
+
+    <div class="about-feature">
+      <div class="about-icon">🌠</div>
+      <div class="about-feat-text">
+        <div class="about-feat-title">Birth Chart Reading</div>
+        A real astronomical calculation of your Sun, Moon, and Ascendant based on your birth data — giving you a precise cosmic profile with sky map and planetary positions.
+      </div>
+    </div>
+
+    <div class="about-feature">
+      <div class="about-icon">📅</div>
+      <div class="about-feat-text">
+        <div class="about-feat-title">Daily Horoscope</div>
+        Today's personalised guidance for your sun sign — including energy levels for love, career, and luck, plus lucky numbers and colours.
+      </div>
+    </div>
+
+    <div class="about-feature">
+      <div class="about-icon">💞</div>
+      <div class="about-feat-text">
+        <div class="about-feat-title">Compatibility Checker</div>
+        Discover the cosmic bond between two signs with a full compatibility score across emotional, communication, passion, and spiritual dimensions.
+      </div>
+    </div>
+
+    <div class="about-feature">
+      <div class="about-icon">🃏</div>
+      <div class="about-feat-text">
+        <div class="about-feat-title">Tarot Oracle</div>
+        Draw from the full Major Arcana — with real Rider-Waite card art — across Yes/No, Love, Career, and General spreads. Each reading is unique and personal.
+      </div>
+    </div>
+
+    <div class="about-feature">
+      <div class="about-icon">✨</div>
+      <div class="about-feat-text">
+        <div class="about-feat-title">AI Oracle Chat</div>
+        A conversational oracle powered by Claude AI that draws a tarot card with every reply, interprets it in the context of your question, and offers compassionate, grounded guidance.
+      </div>
+    </div>
+
+    <div class="modal-divider"></div>
+
+    <p>We don't predict your fate — we illuminate the possibilities. Tarot is a tool for reflection, not prophecy. The power to shape your path has always been yours.</p>
+
+    <p style="font-size:0.82rem;color:var(--text-dim);font-style:normal;">
+      © 2026 Oracle Sandi Labb · All Spiritual Rights Reserved<br>
+      For entertainment and reflective purposes only.
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer>© 2026 Oracle Sandi Labb · All Spiritual Rights Reserved · For Reflective Purposes</footer>
+
+<!-- ══════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════ -->
+<script src="javascript.js"></script>
+
+</body>
+</html>
